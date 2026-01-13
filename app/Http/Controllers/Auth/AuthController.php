@@ -19,6 +19,9 @@ use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 // :::::::::::::::::::::::::::::::::::::::::::::: 2FA IMPORT
 use PragmaRX\Google2FA\Google2FA;
+use Tymon\JWTAuth\Exceptions\JWTException;
+use Tymon\JWTAuth\Exceptions\TokenExpiredException;
+use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 
 class AuthController extends Controller
 {
@@ -110,6 +113,30 @@ class AuthController extends Controller
         ]);
     }
 
+    public function refreshToken(Request $request)
+    {
+        try {
+            $token = $request->bearerToken();
+
+            if (!$token) {
+                return response()->json(['error' => 'Access token is required'], 400);
+            }
+            JWTAuth::setToken($token);
+            $newToken = JWTAuth::refresh();
+
+            return response()->json([
+                'access_token'       => $newToken,
+                'access_expires_in'  => JWTAuth::factory()->getTTL() * 60,
+                'refresh_expires_in' => config('jwt.refresh_ttl') * 60,
+            ]);
+        } catch (TokenExpiredException $e) {
+            return response()->json(['error' => 'Token expired and cannot be refreshed'], 401);
+        } catch (TokenInvalidException $e) {
+            return response()->json(['error' => 'Invalid token'], 401);
+        } catch (JWTException $e) {
+            return response()->json(['error' => 'Token is required or invalid'], 400);
+        }
+    }
 
     public function logout()
     {
@@ -200,6 +227,14 @@ class AuthController extends Controller
                 'title' => __('navigation.sample'),
                 'to' => ['name' => 'sample'],
                 'icon' => ['icon' => 'tabler-brand-sketch'],
+            ];
+        }
+
+        if (true) {
+            $navigator[] = [
+                'title' => __('navigation.test'),
+                'to' => ['name' => 'test'],
+                'icon' => ['icon' => 'tabler-test'],
             ];
         }
 

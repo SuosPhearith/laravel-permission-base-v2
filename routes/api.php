@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Billing\ExchangeController;
+use App\Http\Controllers\Core\TestController;
 use App\Http\Controllers\Setting\SettingController;
+use App\Services\HelperService;
 use Illuminate\Support\Facades\Route;
 
 // :::::::::::::::::::::::::::::::::::::::::::::::::::::: RATE LIMIT 120 TIMES PER MINUTE
@@ -15,16 +17,15 @@ Route::middleware('throttle:120,1')->group(function () {
     //:::::::::::::::::::::::::::::::::::::::::::::::: PHARMACY
 
     Route::prefix('v1')->group(function () {
+        Route::post('test',                                 [TestController::class, 'requestSocketApi'])->middleware('throttle:50,1');
 
-        Route::post('auth/login',       [AuthController::class, 'login'])->middleware('throttle:50,1');
-        // Route::post('auth/register',    [AuthController::class, 'register'])->middleware('throttle:50,1');
+        Route::post('auth/login',                           [AuthController::class, 'login'])->middleware('throttle:50,1');
+        Route::post('auth/refresh-token',                   [AuthController::class, 'refreshToken'])->middleware('throttle:500,1');
+        Route::post('auth/register',                        [AuthController::class, 'register'])->middleware('throttle:50,1');
 
         Route::get('setting/get-translate',                 [SettingController::class, 'getTranslate'])->middleware('throttle:500,1');
 
         Route::middleware(['authentication.jwt.auth'])->group(function () {
-            Route::prefix('billing')->group(function () {
-                require_once __DIR__ . '/api/billing.php';
-            });
             Route::prefix('auth')->group(function () {
                 require_once __DIR__ . '/api/auth.php';
             });
@@ -39,9 +40,7 @@ Route::middleware('throttle:120,1')->group(function () {
             });
         });
 
-        Route::middleware(['apiKey'])->group(function () {
-            Route::get('/exchange-rate',     [ExchangeController::class, 'getExchangeRate']);
-        });
+        Route::middleware(['apiKey'])->group(function () {});
     });
 
     //:::::::::::::::::::::::::::::::::::::::::::::::: PHARMACY

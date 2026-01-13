@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'sever_socket' => [
+        'url' => env('SERVER_SOCKET_URL'),
+        'basic_user' => env('SERVER_SOCKET_BASIC_USER'),
+        'basic_pass' => env('SERVER_SOCKET_BASIC_PASS'),
+    ],
+
 ];

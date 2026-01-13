@@ -29,6 +29,7 @@ class SettingController extends Controller
                     "navigation.setting.permission" => "សិទ្ធិ",
                     "navigation.setting.config" => "រចនាសម្ព័ន្ធ",
                     "navigation.account" => "គណនី",
+                    "navigation.test" => "សាកល្បង",
 
                     "app.title" => "ការកំណត់កម្មវិធី",
                     "app.description" => "កំណត់ការកំណត់មូលដ្ឋានរបស់កម្មវិធី រចនាបទ និងទិដ្ឋភាព",
@@ -71,6 +72,7 @@ class SettingController extends Controller
                     "navigation.setting.permission" => "Permission",
                     "navigation.setting.config" => "Config",
                     "navigation.account" => "Account",
+                    "navigation.test" => "Test",
 
                     "app.title" => "Application Configuration",
                     "app.description" => "Configure your application's basic settings, layout preferences, and visual appearance",
